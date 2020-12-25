@@ -1,15 +1,14 @@
-#include <vector>
-#include <string>
-#include <string.h>
-#include <stdio.h>
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <assert.h>
+// clang-format off
 #include "double_metaphone.h"
 
-const unsigned int max_length = 32;
+#include <algorithm>
+
+
+const int max_length = 32;
+
+using string = std::string;
+template<typename T>
+using vector = std::vector<T>;
 
 void MakeUpper(string &s) {
   for (unsigned int i = 0; i < s.length(); i++) {
@@ -116,7 +115,9 @@ void DoubleMetaphone(const string &str, vector<string> *codes)
   original += "     ";
 
   primary = "";
+  primary.reserve(std::min(length, max_length));
   secondary = "";
+  secondary.reserve(std::min(length, max_length));
 
   MakeUpper(original);
 
@@ -164,11 +165,13 @@ void DoubleMetaphone(const string &str, vector<string> *codes)
         current += 1;
       break;
 
-    case 'Ç':
+#if 0  // UTF-8, not Latin1
+    case 'Ã‡':
       primary += "S";
       secondary += "S";
       current += 1;
       break;
+#endif
 
     case 'C':
       /* various germanic */
@@ -628,11 +631,13 @@ void DoubleMetaphone(const string &str, vector<string> *codes)
       secondary += "N";
       break;
 
-    case 'Ñ':
+#if 0  // UTF-8, not Latin1
+    case 'Ã‘':
       current += 1;
       primary += "N";
       secondary += "N";
       break;
+#endif
 
     case 'P':
       if (GetAt(original, current + 1) == 'H') {
@@ -948,3 +953,4 @@ void DoubleMetaphone(const string &str, vector<string> *codes)
   codes->push_back(primary);
   codes->push_back(secondary);
 }
+// clang-format on
