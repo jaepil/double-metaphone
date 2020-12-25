@@ -2,6 +2,8 @@
 #include "double_metaphone.h"
 
 #include <algorithm>
+#include <cstring>
+#include <cstdarg>
 
 
 const int max_length = 32;
@@ -20,7 +22,7 @@ int IsVowel(string &s, unsigned int pos)
 {
   char c;
 
-  if ((pos < 0) || (pos >= s.length()))
+  if (pos >= s.length())
     return 0;
 
   c = s[pos];
@@ -35,13 +37,13 @@ int IsVowel(string &s, unsigned int pos)
 
 int SlavoGermanic(string &s)
 {
-  if ((char *) strstr(s.c_str(), "W"))
+  if ((char *) std::strstr(s.c_str(), "W"))
     return 1;
-  else if ((char *) strstr(s.c_str(), "K"))
+  else if ((char *) std::strstr(s.c_str(), "K"))
     return 1;
-  else if ((char *) strstr(s.c_str(), "CZ"))
+  else if ((char *) std::strstr(s.c_str(), "CZ"))
     return 1;
-  else if ((char *) strstr(s.c_str(), "WITZ"))
+  else if ((char *) std::strstr(s.c_str(), "WITZ"))
     return 1;
   else
     return 0;
@@ -50,7 +52,7 @@ int SlavoGermanic(string &s)
 
 char GetAt(string &s, unsigned int pos)
 {
-  if ((pos < 0) || (pos >= s.length())) {
+  if (pos >= s.length()) {
     return '\0';
   }
 
@@ -60,7 +62,7 @@ char GetAt(string &s, unsigned int pos)
 
 void SetAt(string &s, unsigned int pos, char c)
 {
-  if ((pos < 0) || (pos >= s.length())) {
+  if (pos >= s.length()) {
     return;
   }
 
@@ -77,7 +79,7 @@ int StringAt(string &s, unsigned int start, unsigned int length, ...)
   const char *pos;
   va_list ap;
 
-  if ((start < 0) || (start >= s.length())) {
+  if (start >= s.length()) {
     return 0;
   }
 
