@@ -1,0 +1,5 @@
+Checks: "-readability-identifier-naming, \
+    -readability-braces-around-statements, \
+    -bugprone-suspicious-string-compare, \
+    -cppcoreguidelines-init-variables, \
+    -cppcoreguidelines-pro-type-cstyle-cast"
