@@ -1,15 +1,16 @@
-#include <vector>
-#include <string>
-#include <string.h>
-#include <stdio.h>
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <assert.h>
+// clang-format off
 #include "double_metaphone.h"
 
-const unsigned int max_length = 32;
+#include <algorithm>
+#include <cstring>
+#include <cstdarg>
+
+
+const int max_length = 32;
+
+using string = std::string;
+template<typename T>
+using vector = std::vector<T>;
 
 void MakeUpper(string &s) {
   for (unsigned int i = 0; i < s.length(); i++) {
@@ -21,7 +22,7 @@ int IsVowel(string &s, unsigned int pos)
 {
   char c;
 
-  if ((pos < 0) || (pos >= s.length()))
+  if (pos >= s.length())
     return 0;
 
   c = s[pos];
@@ -36,13 +37,13 @@ int IsVowel(string &s, unsigned int pos)
 
 int SlavoGermanic(string &s)
 {
-  if ((char *) strstr(s.c_str(), "W"))
+  if ((char *) std::strstr(s.c_str(), "W"))
     return 1;
-  else if ((char *) strstr(s.c_str(), "K"))
+  else if ((char *) std::strstr(s.c_str(), "K"))
     return 1;
-  else if ((char *) strstr(s.c_str(), "CZ"))
+  else if ((char *) std::strstr(s.c_str(), "CZ"))
     return 1;
-  else if ((char *) strstr(s.c_str(), "WITZ"))
+  else if ((char *) std::strstr(s.c_str(), "WITZ"))
     return 1;
   else
     return 0;
@@ -51,7 +52,7 @@ int SlavoGermanic(string &s)
 
 char GetAt(string &s, unsigned int pos)
 {
-  if ((pos < 0) || (pos >= s.length())) {
+  if (pos >= s.length()) {
     return '\0';
   }
 
@@ -61,7 +62,7 @@ char GetAt(string &s, unsigned int pos)
 
 void SetAt(string &s, unsigned int pos, char c)
 {
-  if ((pos < 0) || (pos >= s.length())) {
+  if (pos >= s.length()) {
     return;
   }
 
@@ -78,7 +79,7 @@ int StringAt(string &s, unsigned int start, unsigned int length, ...)
   const char *pos;
   va_list ap;
 
-  if ((start < 0) || (start >= s.length())) {
+  if (start >= s.length()) {
     return 0;
   }
 
@@ -88,6 +89,7 @@ int StringAt(string &s, unsigned int start, unsigned int length, ...)
   do {
     test = va_arg(ap, char *);
     if (*test && (strncmp(pos, test, length) == 0)) {
+      va_end(ap);
       return 1;
     }
   } while (strcmp(test, ""));
@@ -116,7 +118,9 @@ void DoubleMetaphone(const string &str, vector<string> *codes)
   original += "     ";
 
   primary = "";
+  primary.reserve(std::min(length, max_length));
   secondary = "";
+  secondary.reserve(std::min(length, max_length));
 
   MakeUpper(original);
 
@@ -164,11 +168,13 @@ void DoubleMetaphone(const string &str, vector<string> *codes)
         current += 1;
       break;
 
-    case 'Ç':
+#if 0  // UTF-8, not Latin1
+    case 'Ã‡':
       primary += "S";
       secondary += "S";
       current += 1;
       break;
+#endif
 
     case 'C':
       /* various germanic */
@@ -628,11 +634,13 @@ void DoubleMetaphone(const string &str, vector<string> *codes)
       secondary += "N";
       break;
 
-    case 'Ñ':
+#if 0  // UTF-8, not Latin1
+    case 'Ã‘':
       current += 1;
       primary += "N";
       secondary += "N";
       break;
+#endif
 
     case 'P':
       if (GetAt(original, current + 1) == 'H') {
@@ -948,3 +956,4 @@ void DoubleMetaphone(const string &str, vector<string> *codes)
   codes->push_back(primary);
   codes->push_back(secondary);
 }
+// clang-format on
